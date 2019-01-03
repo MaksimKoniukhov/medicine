@@ -1,25 +1,38 @@
 package com.medicine.medicine.converter.impl;
 
 import com.medicine.medicine.converter.DtoDboConverter;
-import com.medicine.medicine.entity.MedicineEntity;
+import com.medicine.medicine.dto.DrugstoreDtoWithoutMedicine;
 import com.medicine.medicine.dto.MedicineDto;
+import com.medicine.medicine.entity.DrugstoreEntity;
+import com.medicine.medicine.entity.MedicineEntity;
+import com.medicine.medicine.repository.MedicineRepository;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Service
-@AllArgsConstructor
+//@AllArgsConstructor
 public class MedicineConverter implements DtoDboConverter<MedicineDto, MedicineEntity> {
+    @Autowired
+    private MedicineRepository medicineRepository;
+    @Autowired
+    private DrugstoreConverter drugstoreConverter;
+
 //    private OrderConverter orderConverter;
 
     @Override
     public MedicineDto convertToDto(MedicineEntity entity) {
         final MedicineDto medicineDto = new MedicineDto();
         BeanUtils.copyProperties(entity, medicineDto);
+        Set<DrugstoreEntity> drugstoreEntitySet = entity.getDrugstoreEntitySet();
+        if (drugstoreEntitySet != null) {
+            drugstoreEntitySet.forEach(drugstoreEntity -> medicineDto.getDrugstoreDtoWithoutMedicineSet()
+                    .add(drugstoreConverter.convertToDtoWithoutMedicine(drugstoreEntity)));
+        }
+
 //        medicineDto
 //                .setOrderDtoSet(orderConverter
 //                        .convertSetToDto(entity
@@ -31,11 +44,19 @@ public class MedicineConverter implements DtoDboConverter<MedicineDto, MedicineE
     public MedicineEntity convertToDbo(MedicineDto dto) {
         final MedicineEntity medicineEntity = new MedicineEntity();
         BeanUtils.copyProperties(dto, medicineEntity);
+        medicineEntity.setOrderEntitySet(medicineRepository.findById(dto.getId())
+                .orElse(new MedicineEntity()).getOrderEntitySet());
+        Set<DrugstoreDtoWithoutMedicine> dtoWithoutMedicineSet = dto.getDrugstoreDtoWithoutMedicineSet();
+        if (dtoWithoutMedicineSet != null) {
+            dtoWithoutMedicineSet.forEach(dtoWithoutMedicine -> medicineEntity.getDrugstoreEntitySet()
+                    .add(drugstoreConverter.convertToDboFromDtoWithoutMedicine(dtoWithoutMedicine)));
+        }
+
 //        medicineEntity.setOrderEntitySet(orderConverter.convertSetToDbo(dto.getOrderDtoSet()));
         return medicineEntity;
     }
 
-    public Set<MedicineDto> convertSetToDto(final Set<MedicineEntity> entity) {
+    /*public Set<MedicineDto> convertSetToDto(final Set<MedicineEntity> entity) {
         if (entity != null) {
             final Set<MedicineDto> dtoSet = new HashSet<>();
             for (final MedicineEntity medicineEntity : entity) {
@@ -59,5 +80,5 @@ public class MedicineConverter implements DtoDboConverter<MedicineDto, MedicineE
         } else {
             return null;
         }
-    }
+    }*/
 }

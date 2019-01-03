@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +23,10 @@ public class OrderEntity {
     @NotNull
     @Column(name = "orders")
     private String order;
+
+    @NotNull
+    @Column(name = "date")
+    private Date creationDate = new Date();
 
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(name = "order_medicine",

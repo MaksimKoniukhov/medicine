@@ -1,8 +1,6 @@
 package com.medicine.medicine.controller;
 
-import com.medicine.medicine.dto.MedicineDto;
 import com.medicine.medicine.dto.OrderDto;
-import com.medicine.medicine.dto.UserDto;
 import com.medicine.medicine.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 
@@ -45,4 +46,24 @@ public class OrderController {
         }
     }
 
+    @GetMapping("filter")
+    /*public List<OrderDto> getAllBetweenDates(@RequestParam(value = "from") Date from
+            , @RequestParam(value = "to") Date to) {*/
+    public List<OrderDto> getAllBetweenDates(@RequestParam(value = "from") String fromDate
+            , @RequestParam(value = "to") String toDate) {
+        Date from = null;
+        Date to = null;
+        try {
+            from = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS").parse(fromDate);
+            to = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS").parse(toDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return orderService.getAllBetweenDates(from, to);
+    }
+
+    @GetMapping("orderByDate")
+    public List<OrderDto> getAllOrderByCreationDate() {
+        return orderService.getAllOrderByCreationDate();
+    }
 }

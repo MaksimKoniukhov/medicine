@@ -3,6 +3,7 @@ package com.medicine.medicine.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -26,9 +27,14 @@ public class MedicineEntity {
     @Column(name = "price")
     private int price;
 
-    @ManyToMany(mappedBy = "medicineEntitySet")
+    @ManyToMany(mappedBy = "medicineEntitySet", cascade = CascadeType.ALL)
     @JsonIgnore
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<OrderEntity> orderEntitySet = new HashSet<>();
 
+    @ManyToMany(mappedBy = "medicineEntitySet", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Set<DrugstoreEntity> drugstoreEntitySet;
 }

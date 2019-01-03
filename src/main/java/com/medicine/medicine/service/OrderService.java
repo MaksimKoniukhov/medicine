@@ -2,11 +2,11 @@ package com.medicine.medicine.service;
 
 import com.medicine.medicine.converter.impl.OrderConverter;
 import com.medicine.medicine.dto.OrderDto;
-import com.medicine.medicine.dto.UserDto;
 import com.medicine.medicine.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +26,24 @@ public class OrderService {
     }
 
     public List<OrderDto> getAllOrders() {
-        return orderRepository.findAll().stream().map(orderConverter::convertToDto).collect(Collectors.toList());
+        return orderRepository.findAll()
+                .stream()
+                .map(orderConverter::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderDto> getAllBetweenDates(Date from, Date to) {
+        return
+                orderRepository.findAllByCreationDateBetween(from, to)
+                .stream()
+                .map(orderConverter::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderDto> getAllOrderByCreationDate() {
+        return orderRepository.findAllByOrderByCreationDateDesc()
+                .stream()
+                .map(orderConverter::convertToDto)
+                .collect(Collectors.toList());
     }
 }

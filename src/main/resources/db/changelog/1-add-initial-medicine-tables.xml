@@ -17,7 +17,8 @@
     </changeSet>
     <changeSet id="medicine_table_value" author="root">
         <sql>
-    INSERT INTO medicine(medicine, price) VALUES ("test", 3);
+            INSERT INTO medicine(id, medicine, price) VALUES (1, "visin", 3);
+            INSERT INTO medicine(id, medicine, price) VALUES (2, "panadol", 33);
         </sql>
     </changeSet>
 
@@ -46,7 +47,8 @@
     </changeSet>
     <changeSet id="user_table_value" author="root">
         <sql>
-            INSERT INTO user (id, first_name, last_name, email, login, password) VALUES (1, "den", "sedun", "dens@com", "den", "1234")
+            INSERT INTO user (id, first_name, last_name, email, login, password) VALUES (1, "den", "sedun", "dens@com",
+            "den", "1234")
         </sql>
     </changeSet>
 
@@ -58,6 +60,9 @@
             <column name="orders" type="VARCHAR(64)">
                 <constraints nullable="false"/>
             </column>
+            <column name="date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
             <column name="user_id" type="int">
                 <constraints
                         referencedTableName="user"
@@ -67,9 +72,10 @@
         </createTable>
     </changeSet>
     <changeSet id="order_table_value" author="root">
-    <sql>
-    INSERT INTO `orders`(id,`orders`, user_id) VALUES (1,"test_order", 1);
-    </sql>
+        <sql>
+            INSERT INTO `orders`(id,`orders`, date, user_id) VALUES (1,"test_order1", '2019-01-03 21:01:00', 1);
+            INSERT INTO `orders`(id,`orders`, date, user_id) VALUES (2,"test_order2", '2019-01-04 11:01:00', 1);
+        </sql>
     </changeSet>
 
     <changeSet author="root" id="order_medicine_table">
@@ -84,22 +90,81 @@
                              foreignKeyName="FK_order_medicine_mediciner_id" references="medicine(id)"/>
             </column>
             <!--<column name="order_id" type="bigint(20)">-->
-                <!--<constraints-->
-                        <!--referencedTableName="orders"-->
-                        <!--referencedColumnNames="id"-->
-                        <!--foreignKeyName="order_fk_order_id"/>-->
+            <!--<constraints-->
+            <!--referencedTableName="orders"-->
+            <!--referencedColumnNames="id"-->
+            <!--foreignKeyName="order_fk_order_id"/>-->
             <!--</column>-->
             <!--<column name="medicine_id" type="bigint(20)">-->
-                <!--<constraints-->
-                        <!--referencedTableName="medicine"-->
-                        <!--referencedColumnNames="id"-->
-                        <!--foreignKeyName="medicine_fk_medicine_id"/>-->
+            <!--<constraints-->
+            <!--referencedTableName="medicine"-->
+            <!--referencedColumnNames="id"-->
+            <!--foreignKeyName="medicine_fk_medicine_id"/>-->
             <!--</column>-->
         </createTable>
     </changeSet>
     <changeSet id="order_medicine_value" author="root">
         <sql>
             INSERT INTO order_medicine (order_id, medicine_id) VALUES (1,1);
+            INSERT INTO order_medicine (order_id, medicine_id) VALUES (2,2);
         </sql>
     </changeSet>
+
+    <changeSet author="root" id="drugstore_table">
+        <createTable tableName="drugstore">
+            <column name="id" type="bigint(20)" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="street" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="home_number" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="opening_time" type="time">
+                <constraints nullable="false"/>
+            </column>
+            <column name="closing_time" type="time">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="drugstore_table_value" author="root">
+        <sql>
+            INSERT INTO drugstore(id, name, country, city, street, home_number, opening_time, closing_time)
+            VALUES (1, "apteka1", "RB", "Minsk", "Lenina", 5, '08:00:00', '21:00:00');
+            INSERT INTO drugstore(id, name, country, city, street, home_number, opening_time, closing_time)
+            VALUES (2, "apteka2", "RB", "Minsk", "Gorkogo", 7, '08:00:00', '22:00:00');
+        </sql>
+    </changeSet>
+
+    <changeSet author="root" id="drugstore_medicine_table">
+        <createTable tableName="drugstore_medicine">
+
+            <column name="drugstore_id" type="BIGINT(20)">
+                <constraints primaryKeyName="PK_drugstore_medicine_drugstore_id" primaryKey="true"
+                             foreignKeyName="FK_drugstore_medicine_drugstore_id" references="drugstore(id)"/>
+            </column>
+            <column name="medicine_id" type="BIGINT(20)">
+                <constraints primaryKeyName="PK_drugstore_medicine_medicine_id" primaryKey="true"
+                             foreignKeyName="FK_drugstore_medicine_mediciner_id" references="medicine(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="drugstore_medicine_value" author="root">
+        <sql>
+            INSERT INTO drugstore_medicine (drugstore_id, medicine_id) VALUES (1,1);
+            INSERT INTO drugstore_medicine (drugstore_id, medicine_id) VALUES (2,2);
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

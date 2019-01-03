@@ -17,7 +17,7 @@ public class OrderConverter implements DtoDboConverter<OrderDto, OrderEntity> {
     private MedicineConverter medicineConverter;
 
     @Override
-    public OrderDto convertToDto(OrderEntity entity) {
+    public OrderDto convertToDto(final OrderEntity entity) {
         final OrderDto orderDto = new OrderDto();
         BeanUtils.copyProperties(entity, orderDto);
         orderDto.setMedicineDtoSet(medicineConverter.convertSetToDto(entity.getMedicineEntitySet()));
@@ -25,14 +25,21 @@ public class OrderConverter implements DtoDboConverter<OrderDto, OrderEntity> {
     }
 
     @Override
-    public OrderEntity convertToDbo(OrderDto dto) {
+    public OrderEntity convertToDbo(final OrderDto dto) {
         final OrderEntity orderEntity = new OrderEntity();
         BeanUtils.copyProperties(dto, orderEntity);
         orderEntity.setMedicineEntitySet(medicineConverter.convertSetToDbo(dto.getMedicineDtoSet()));
         return orderEntity;
     }
 
-    public Set<OrderDto> convertSetToDto(final Set<OrderEntity> entity) {
+    public OrderEntity convertToDboForCreate(final OrderDto dto) {
+        final OrderEntity orderEntity = new OrderEntity();
+        BeanUtils.copyProperties(dto, orderEntity, "creationDate");
+        orderEntity.setMedicineEntitySet(medicineConverter.convertSetToDbo(dto.getMedicineDtoSet()));
+        return orderEntity;
+    }
+
+    /*public Set<OrderDto> convertSetToDto(final Set<OrderEntity> entity) {
         if (entity != null) {
             final Set<OrderDto> dtoSet = new HashSet<>();
             for (final OrderEntity orderEntity : entity) {
@@ -56,5 +63,5 @@ public class OrderConverter implements DtoDboConverter<OrderDto, OrderEntity> {
         } else {
             return null;
         }
-    }
+    }*/
 }
